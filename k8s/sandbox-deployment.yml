@@ -31,6 +31,7 @@ spec:
       containers:
         - name: main-sandbox-container
           image: sandbox:latest
+          imagePullPolicy: IfNotPresent
 
           resources:
             limits:
@@ -55,5 +56,5 @@ spec:
             timeoutSeconds: 10
 
           ports:
-            - containerPort: 5000
-              name: main-sandbox-port
+            - containerPort: 3000
+              name: main-sandbox

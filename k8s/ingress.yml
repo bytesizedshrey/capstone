@@ -10,19 +10,20 @@
 
 apiVersion: networking.k8s.io/v1
 kind: Ingress
+
 metadata:
-  name: fontSpace-ingress
-  labels:
-    app.kubernetes.io/name: fontSpace-ingress
+  name: fontspace-ingress
+
 spec:
   ingressClassName: nginx
+
   rules:
-    http:
-      paths:
-      - pathType: Prefix
-        path: "/api/sandbox"
-        backend:
-          service:
-            name: sandbox-service
-            port: 
-              number: 80
+    - http:
+        paths:
+          - path: /api/sandbox
+            pathType: Prefix
+            backend:
+              service:
+                name: sandbox-service
+                port:
+                  number: 80

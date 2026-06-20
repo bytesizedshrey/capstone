@@ -5,10 +5,10 @@ apiVersion: v1
 metadata:
   name:  sandbox-service
 spec:
+  type: ClusterIP
   selector:
-    app:  sandbox
-    type:  ClusterIP
+    app: sandbox
   ports:
-  - name:  main-sandbox-port
-    port:  80
-    targetPort:  8080
+  - name: main-sandbox-port
+    port: 80
+    targetPort: 3000

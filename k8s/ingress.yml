@@ -1,0 +1,28 @@
+# ingress.yml = traffic router for your Services.
+
+#   user
+#     ↓
+#  Ingress
+#   ↙     ↘
+# Service A  Service B
+#   ↓          ↓
+# Pods       Pods
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fontSpace-ingress
+  labels:
+    app.kubernetes.io/name: fontSpace-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/api/sandbox"
+        backend:
+          service:
+            name: sandbox-service
+            port: 
+              number: 80

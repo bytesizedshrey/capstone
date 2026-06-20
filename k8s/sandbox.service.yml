@@ -1,0 +1,14 @@
+# Service = gives those Pods(from deployment) a stable network endpoint
+# sandbox.service.yml creates a Service in Kubernetes.
+kind: Service
+apiVersion: v1
+metadata:
+  name:  sandbox-service
+spec:
+  selector:
+    app:  sandbox
+    type:  ClusterIP
+  ports:
+  - name:  main-sandbox-port
+    port:  80
+    targetPort:  8080

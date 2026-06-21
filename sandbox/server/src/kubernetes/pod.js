@@ -12,10 +12,10 @@ export async function createPod(sandboxId){
                 sandboxId: sandboxId
             }
         },
-        specs : {
+        spec : {
             containers : [
                 {
-                    image : 'template',
+                    image : 'template:v2',
                     imagePullPolicy: 'IfNotPresent',
                     name : 'sandbox-container',
                     ports: [{containerPort : 5174, name:"http"}],
@@ -31,7 +31,7 @@ export async function createPod(sandboxId){
         }
     }
 
-    const response = await k8sCoreV1Api.createNamespacePod({
+    const response = await k8sCoreV1Api.createNamespacedPod({
         namespace : 'default',
         body: podManifest
     })

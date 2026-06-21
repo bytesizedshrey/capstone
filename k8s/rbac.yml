@@ -21,8 +21,8 @@ metadata:
   name : resource-manager-binding
 subjects:
 - kind: ServiceAccount
-  name: resourse-manager
+  name: resource-manager
 roleRef:
   kind:  Role
-  name: resourse-manager
+  name: resource-manager
   apiGroup: rbac.authorization.k8s.io

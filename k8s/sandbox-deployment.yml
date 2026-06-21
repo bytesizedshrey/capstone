@@ -30,7 +30,7 @@ spec:
     spec:
       containers:
         - name: main-sandbox-container
-          image: sandbox:latest
+          image: sandbox:v3
           imagePullPolicy: IfNotPresent
 
           resources:

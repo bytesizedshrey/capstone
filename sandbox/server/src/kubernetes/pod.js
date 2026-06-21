@@ -1,7 +1,10 @@
 import { memo } from "react";
 import { k8sCoreV1Api } from "./config";
 
-    const podManifest = {
+
+export async function createPod(sandboxId){
+
+        const podManifest = {
         metadata: {
             name : `sandebox-pod-${sandboxId}`,
             labels: {
@@ -27,4 +30,14 @@ import { k8sCoreV1Api } from "./config";
             ]
         }
     }
+
+    const response = await k8sCoreV1Api.createNamespacePod({
+        namespace : 'default',
+        body: podManifest
+    })
+
+    return response
+}
+
+
 

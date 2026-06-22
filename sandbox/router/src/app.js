@@ -8,6 +8,7 @@ import { refreshTTL } from './config/redis.js';
 const app = express();
 app.use(morgan('combined'));
 
+// health checks are valid
 app.get('/api/status/healthz', (req, res) => {
     res.status(200).json({ status: 'ok' });
 })
@@ -16,6 +17,7 @@ app.get('/api/status/readyz', (req, res) => {
     res.status(200).json({ status: 'ready' });
 })
 
+// caching proxies to keep it speedy
 const proxies = {}
 const agentProxies = {}
 
@@ -48,6 +50,7 @@ wsProxy.on('error', (err, req, socket) => {
     socket?.destroy();
 });
 
+// routing checks fr fr
 app.use(async (req, res, next) => {
     const host = req.headers.host || '';
     const parts = host.split('.');

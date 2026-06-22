@@ -5,6 +5,7 @@ const redisPort = process.env.REDIS_PORT || 6379;
 
 let redis = null;
 
+// connection is a bit unstable no cap
 try {
   redis = new Redis({
     host: redisHost,
@@ -22,6 +23,7 @@ try {
   console.warn(`[Redis] Initialization warning (running in degraded mode): ${error.message}`);
 }
 
+// keeping it rent free in cache
 export async function refreshTTL(sandboxId) {
   if (!redis) return;
   try {

@@ -2,6 +2,7 @@
 import { k8sCoreV1Api } from "./config.js";
 
 
+// creating the pod manifest, no cap
 export async function createPod(sandboxId){
 
         const podManifest = {
@@ -19,6 +20,7 @@ export async function createPod(sandboxId){
                     emptyDir : {}
                 }
             ],
+            // copy elements to workspace before running, valid
             initContainers:[
                 {
                     name : 'init-container',
@@ -73,6 +75,7 @@ export async function createPod(sandboxId){
         }
     }
 
+    // let kubernetes do the heavy lifting
     const response = await k8sCoreV1Api.createNamespacedPod({
         namespace : 'default',
         body: podManifest

@@ -1,5 +1,6 @@
 import { k8sCoreV1Api } from "./config.js";
 
+// mapping the service specs so they can talk, fr fr
 export const createService = async (sandboxId) => {
     const serviceManifest = {
         metadata : {
@@ -32,6 +33,7 @@ export const createService = async (sandboxId) => {
         }
     }
 
+    // send the service spec to kubernetes
     const response = await k8sCoreV1Api.createNamespacedService({
         namespace : 'default' ,
         body : serviceManifest

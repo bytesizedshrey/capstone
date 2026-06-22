@@ -11,6 +11,7 @@ app.use(morgan('dev'))
 app.use(express.json())
 app.use(express.urlencoded({extended: true})) //supports nested objects and arrays.
 
+// checking if API is still breathing
 app.get('/api/sandbox/health',(req,res)=>{
     res.status(200).json({
         message : 'Sandbox API is healthy',
@@ -18,6 +19,7 @@ app.get('/api/sandbox/health',(req,res)=>{
     })
 })
 
+// main entry point for spinning up pods, fr fr
 app.post("/api/sandbox/start",async(req,res)=>{
     const sandboxId = uuid()
 

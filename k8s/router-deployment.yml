@@ -15,15 +15,16 @@ spec:
         app:  router
     spec:
       containers:
-      - image:  router
+      - image:  router:latest
         name:  router-server
+        imagePullPolicy: IfNotPresent
         resources:
           requests:
             cpu: "250m"
-            memory: "250M"
+            memory: "250Mi"
           limits:
             cpu: "500m"
-            memory: "500M"
+            memory: "500Mi"
         env:
         - name: PORT
           value: "3000"

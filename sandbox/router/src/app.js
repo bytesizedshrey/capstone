@@ -1,61 +1,101 @@
 import express from 'express';
-import { createProxyMiddleware } from 'http-proxy-middleware';
 import morgan from 'morgan';
+import { createProxyMiddleware } from "http-proxy-middleware";
+import http from 'http';
+import { createProxyServer } from 'httpxy';
+import { refreshTTL } from './config/redis.js';
 
 const app = express();
 app.use(morgan('combined'));
 
-// Health check endpoints for the router itself
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok', service: 'router' });
-});
-
 app.get('/api/status/healthz', (req, res) => {
-  res.status(200).json({ status: 'ok', service: 'router' });
-});
+    res.status(200).json({ status: 'ok' });
+})
 
 app.get('/api/status/readyz', (req, res) => {
-  res.status(200).json({ status: 'ok', service: 'router' });
+    res.status(200).json({ status: 'ready' });
+})
+
+const proxies = {}
+const agentProxies = {}
+
+function getProxy(sandboxId) {
+    const target = `http://sandbox-service-${sandboxId}`;
+    if (!proxies[ sandboxId ]) {
+        proxies[ sandboxId ] = createProxyMiddleware({
+            target,
+            changeOrigin: true,
+        });
+    }
+    return proxies[ sandboxId ];
+}
+
+function getAgentProxy(sandboxId) {
+    const target = `http://sandbox-service-${sandboxId}:3000`;
+    if (!agentProxies[ sandboxId ]) {
+        agentProxies[ sandboxId ] = createProxyMiddleware({
+            target,
+            changeOrigin: true,
+        });
+    }
+    return agentProxies[ sandboxId ];
+}
+
+// Single httpxy proxy server for all WebSocket upgrades
+const wsProxy = createProxyServer({ changeOrigin: true });
+wsProxy.on('error', (err, req, socket) => {
+    console.error('WS proxy error:', err.message);
+    socket?.destroy();
 });
 
-// Dynamic proxy middleware
-export const sandboxProxy = createProxyMiddleware({
-  target: 'http://localhost:9999', // dummy fallback target
-  router: (req) => {
+app.use(async (req, res, next) => {
     const host = req.headers.host || '';
     const parts = host.split('.');
-    
-    // We expect at least [<sandboxId>, 'preview', 'localhost']
+
     if (parts.length >= 3) {
-      const sandboxId = parts[0];
-      return `http://sandbox-service-${sandboxId}:80`;
+        const sandboxId = parts[0];
+        const type = parts[1];
+
+        await refreshTTL(sandboxId);
+
+        if (type === 'agent') {
+            return getAgentProxy(sandboxId)(req, res, next);
+        } else if (type === 'preview') {
+            return getProxy(sandboxId)(req, res, next);
+        }
     }
-    return null;
-  },
-  changeOrigin: true,
-  ws: true,
-  onError: (err, req, res) => {
-    console.error(`[Router] Proxy error:`, err);
-    if (res.writeHead && !res.headersSent) {
-      res.writeHead(500, { 'Content-Type': 'application/json' });
-    }
-    res.end(JSON.stringify({ message: 'Error proxying to sandbox environment', error: err.message }));
-  }
+
+    return res.status(400).json({
+        message: 'Bad Request: Invalid or missing sandbox subdomain in Host header',
+        host
+    });
 });
 
-// Capture all requests that match the subdomain routing
-app.use((req, res, next) => {
-  const host = req.headers.host || '';
-  const parts = host.split('.');
-  
-  if (parts.length >= 3) {
-    return sandboxProxy(req, res, next);
-  }
-  
-  return res.status(400).json({
-    message: 'Bad Request: Missing sandbox ID subdomain in Host header',
-    host
-  });
+// Create the HTTP server explicitly
+const server = http.createServer(app);
+
+server.on('upgrade', (req, socket, head) => {
+    const host = req.headers.host;
+    if (!host) { socket.destroy(); return; }
+
+    // Prevent EPIPE and connection-reset errors from crashing the process
+    // during the active piped session (after ws() Promise has resolved)
+    socket.on('error', () => socket.destroy());
+
+    const sandboxId = host.split('.')[ 0 ];
+    const type = host.split('.')[ 1 ];
+
+    console.log(`WS upgrade request: ${host}, sandboxId: ${sandboxId}, type: ${type}`);
+
+    if (type === 'agent') {
+        wsProxy.ws(req, socket, { target: `http://sandbox-service-${sandboxId}:3000` }, head)
+            .catch(() => socket.destroy());
+    } else if (type === 'preview') {
+        wsProxy.ws(req, socket, { target: `http://sandbox-service-${sandboxId}` }, head)
+            .catch(() => socket.destroy());
+    } else {
+        socket.destroy();
+    }
 });
 
-export default app;
+export default server; // export server, not app

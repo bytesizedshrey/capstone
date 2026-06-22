@@ -28,6 +28,17 @@ spec:
                 port:
                   number: 80
 
+    - host: "*.agent.localhost"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: router-service
+                port:
+                  number: 80
+
     - host: "*.preview.localhost"
       http:
         paths:

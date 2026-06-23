@@ -7,7 +7,29 @@ build :
       context: ai-orchestration
       docker:
         dockerfile: Dockerfile
-        noCache: false
-        pullParent: false
-        squash: false
+
+    - image : agent
+      context: sandbox/agent
+      docker:
+        dockerfile : dockerfile
   
+    - image: router
+      context: sandbox/router
+      docker :
+        dockerfile: dockerfile
+
+    - image: template
+      context : sandbox/server
+      docker:
+        dockerfile: dockerfile
+
+manifests:
+  rawYaml:
+    - k8s/ai-deployment.yml
+    - k8s/ai-service.yml
+    - k8s/ingress.yml
+    - k8s/rbac.yml
+    - k8s/router-deployment.yml
+    - k8s/router-service.yml
+    - k8s/sandbox-deployment.yml
+    - k8s/sandbox.service.yml

@@ -2,17 +2,20 @@ import axios from 'axios';
 import { tool } from "langchain"
 import * as z from "zod";
 
-
+// setup list files tool no cap
 export const listFiles = tool(
-    async ({ }, config) => {
+    async ({ }) => {
+        console.log("=================================")
+        console.log("using list files tool")
+        console.log("=================================")
 
-        const writer = config.context?.writer ?? (() => {});
+        // get all files from the sandbox
+        const response = await axios.get("http://019ef1fd-cf13-7798-a0de-a43e5217f781.agent.localhost/list-files")
 
-        writer("Listing files in project directory...\n");
 
-        const response = await axios.get(`http://sandbox-service-${config.context.projectId}:3000/list-files`)
-
-        writer("Files listed successfully." + "Files: " + response.data.files.join(",") + "\n");
+        console.log("=================================")
+        console.log("response from list files tool", response.data)
+        console.log("=================================")
 
         return JSON.stringify(response.data.files);
     },
@@ -23,16 +26,20 @@ export const listFiles = tool(
     }
 )
 
+// setup read files tool fr
 export const readFiles = tool(
-    async ({ files = [] }, config) => {
+    async ({ files = [] }) => {
 
-        const writer = config.context?.writer ?? (() => {});
+        console.log("=================================")
+        console.log("using read files tool with files", files)
+        console.log("=================================")
 
-        writer("Reading files..." + files.join(",") + "\n");
+        // read contents of files, spill the tea
+        const response = await axios.get("http://019ef1fd-cf13-7798-a0de-a43e5217f781.agent.localhost/read-files?files=" + files.join(","))
 
-        const response = await axios.get(`http://sandbox-service-${config.context.projectId}:3000/read-files?files=` + files.join(","))
-
-        writer("Files read successfully.\n");
+        console.log("=================================")
+        console.log("response from read files tool", response.data)
+        console.log("=================================")
         return JSON.stringify(response.data);
     },
     {
@@ -44,19 +51,21 @@ export const readFiles = tool(
     }
 )
 
+// setup update files tool fr
 export const updateFiles = tool(
-    async ({ files }, config) => {
-        const writer = config.context?.writer ?? (() => {});
+    async ({ files }) => {
 
-        writer("Updating files..." + files.map(f => f.file).join(",") + "\n");
+        console.log("=================================")
+        console.log("using update files tool with files", files)
+        console.log("=================================")
 
-
-        const response = await axios.patch(`http://sandbox-service-${config.context.projectId}:3000/update-files`, {
+        // patch updates to sandbox files, make it pretty
+        const response = await axios.patch("http://019ef1fd-cf13-7798-a0de-a43e5217f781.agent.localhost/update-files", {
             updates: files
         })
-
-        writer("Files updated successfully.\n");
-
+        console.log("=================================")
+        console.log("response from update files tool", response.data)
+        console.log("=================================")
 
         return JSON.stringify(response.data.results);
     },
@@ -71,3 +80,4 @@ export const updateFiles = tool(
         })
     }
 )
+

@@ -21,4 +21,4 @@ await agent.invoke({
             content: "create a simple snake game in the project using react and css."
         }
     ]
-})
+}, { recursionLimit: 100 })

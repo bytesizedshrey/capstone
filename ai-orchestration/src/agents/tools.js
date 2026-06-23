@@ -2,15 +2,14 @@ import axios from 'axios';
 import { tool } from "langchain"
 import * as z from "zod";
 
-// setup list files tool no cap
+
 export const listFiles = tool(
     async ({ }) => {
         console.log("=================================")
         console.log("using list files tool")
         console.log("=================================")
 
-        // get all files from the sandbox
-        const response = await axios.get("http://019ef1fd-cf13-7798-a0de-a43e5217f781.agent.localhost/list-files")
+        const response = await axios.get("http://019ef383-5f1a-702c-ad20-b85a445be216.agent.localhost/list-files")
 
 
         console.log("=================================")
@@ -26,16 +25,14 @@ export const listFiles = tool(
     }
 )
 
-// setup read files tool fr
 export const readFiles = tool(
-    async ({ files = [] }) => {
+    async ({ files: [] }) => {
 
         console.log("=================================")
         console.log("using read files tool with files", files)
         console.log("=================================")
 
-        // read contents of files, spill the tea
-        const response = await axios.get("http://019ef1fd-cf13-7798-a0de-a43e5217f781.agent.localhost/read-files?files=" + files.join(","))
+        const response = await axios.get("http://019ef383-5f1a-702c-ad20-b85a445be216.agent.localhost/read-files?files=" + files.join(","))
 
         console.log("=================================")
         console.log("response from read files tool", response.data)
@@ -51,7 +48,6 @@ export const readFiles = tool(
     }
 )
 
-// setup update files tool fr
 export const updateFiles = tool(
     async ({ files }) => {
 
@@ -59,8 +55,7 @@ export const updateFiles = tool(
         console.log("using update files tool with files", files)
         console.log("=================================")
 
-        // patch updates to sandbox files, make it pretty
-        const response = await axios.patch("http://019ef1fd-cf13-7798-a0de-a43e5217f781.agent.localhost/update-files", {
+        const response = await axios.patch("http://019ef383-5f1a-702c-ad20-b85a445be216.agent.localhost/update-files", {
             updates: files
         })
         console.log("=================================")

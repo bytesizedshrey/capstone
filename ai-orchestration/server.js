@@ -1,4 +1,3 @@
-// loading env and starting the server fr
 import "dotenv/config";
 import app from './src/app.js';
 

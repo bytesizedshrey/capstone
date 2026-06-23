@@ -3,11 +3,11 @@ import morgan from 'morgan';
 
 const app = express();
 
-// setting up middleware fr
+// Middleware
 app.use(morgan('dev'));
 app.use(express.json());
 
-// checking if server is home no cap
+// Routes
 app.get('/api/ai/healthz', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });

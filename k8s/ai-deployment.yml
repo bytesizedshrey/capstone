@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  ai-deployment
+  labels:
+    name:  ai-deployment
+spec:
+replicas : 1
+selector:
+  matchLabels:
+  app:  ai-server 
+  template:
+    metadata:
+      labels:
+        name:  my-name
+    spec:
+      containers:
+      - image:  ipedrazas/docmock
+        name:  my-name
+        resources:
+          requests:
+            cpu: "20m"
+            memory: "55M"
+        livenessProbe:
+          httpGet:
+            path: /_status/healthz
+            port: 5000
+          initialDelaySeconds: 90
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /_status/healthz
+            port: 5000
+          initialDelaySeconds: 30
+          timeoutSeconds: 10     
+        ports:
+        - containerPort:  5000
+          name:  my-name

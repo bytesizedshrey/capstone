@@ -1,12 +1,11 @@
 import { Router } from "express";
 import agent from "../agents/code.agent.js";
-import { context } from "langchain";
 
 const agentRouter = Router();
 
 agentRouter.post("/invoke", async (req, res) => {
   try {
-    const { message } = req.body;
+    const { message, projectId } = req.body;
     
     const response = await agent.invoke({
       messages: [
@@ -15,7 +14,13 @@ agentRouter.post("/invoke", async (req, res) => {
           content: message,
         },
       ],
-    }, { recursionLimit: 100 });
+    },
+    {
+      configurable: {
+        projectId
+      },
+      recursionLimit: 100
+    });
     res.json({ response });
   } catch (error) {
     console.error(`Error invoking agent : `, error);

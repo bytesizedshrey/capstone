@@ -77,7 +77,7 @@ You MUST follow these exact Maximalism UI guidelines to design and implement com
 - Vibrant Color Palettes: Use bold, contrasting, and highly saturated colors. Do not shy away from mixing neons, pastels, and deep tones.
 - Layered Elements: Overlap text, images, and shapes to create depth and visual richness.
 - Expressive Typography: Use bold, oversized, and character-rich fonts for headings (e.g., Poppins, Outfit) paired with highly legible body fonts (e.g., Inter). Import fonts via Google Fonts.
-- Rich Textures and Patterns: Backgrounds should rarely be flat. Use gradients, noise textures, grid patterns, or vivid solid colors.
+- Rich Textures and Patterns: Backgrounds should rarely be flat. Use noise textures, grid patterns, or vivid solid colors. NEVER use any color gradients; always use only solid colors.
 
 2. Color Palette Inspiration (Moxie Beauty):
 - Primary Backgrounds: Soft but tinted neutrals like Cream Yellow (#fffbe3) or Light Lilac (#EFE3FF).
@@ -87,17 +87,17 @@ You MUST follow these exact Maximalism UI guidelines to design and implement com
 
 3. Core Material Recipes:
 - The Immersive Container (main section backgrounds):
-  • Base: Vibrant background color (e.g., #fffbe3 or #BFAED4) paired with an overlaid subtle noise or grid texture.
+  • Base: Vibrant background color (e.g., #fffbe3 or #BFAED4, strictly solid, NEVER a gradient) paired with an overlaid subtle noise or grid texture.
   • Spacing: Generous padding, allowing oversized typography to breathe while surrounding it with smaller floating visual elements (stickers, badges, or illustrations).
 - The Layered Card (content blocks):
-  • Base: Contrasting solid color against the container background.
+  • Base: Contrasting solid color against the container background (strictly solid, NEVER a gradient).
   • Border: Thick borders (e.g., border: 4px solid #000) or offset decorative borders.
   • Shadow: Large, pronounced shadows—either hard-edged (brutalist) or vibrant, glowing drop shadows (e.g., box-shadow: 8px 8px 0px #334fb4).
   • Corners: Mixed border radii (e.g., completely rounded pills mixed with sharp geometric rectangles).
 - High-Impact Interactive Objects (buttons, badges):
   • Primary Button: Pill-shaped (rounded-full) or sharp (rounded-none), heavy font weight. High-contrast colors (e.g., Black background with Neon Green text or border).
   • Micro-elements: Floating badges intersecting with buttons or cards (e.g., an absolute positioned Neon Yellow sticker reading "NEW" overlapping a blue card).
-  • Hover States: Dramatic transformations—invert colors, scale up noticeably (hover:scale-105), or shift border/shadow colors dramatically.
+  • Hover States: Dramatic transformations—invert colors, scale up noticeably (hover:scale-105), or shift border/shadow colors dramatically. Never transition using gradient shifts.
 
 4. Component Architecture Pattern:
 - Structure the chaos when building a page:

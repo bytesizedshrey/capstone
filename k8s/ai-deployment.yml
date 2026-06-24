@@ -22,12 +22,9 @@ spec:
       containers:
         - name: ai-server
           image: ai-orchestration
-          env:
-            - name: MISTRAL_API_KEY
-              valueFrom:
-                secretKeyRef:
-                  name: ai-secrets
-                  key: MISTRAL_API_KEY
+          envFrom:
+            - secretRef:
+                name: ai-secrets
 
           resources:
             requests:

@@ -1,0 +1,66 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f0ebe3;
+  --color-surface: #e8e0d4;
+  --color-border: #000000;
+  --color-shadow: #000000;
+  --color-main: #ffdd57;
+  --color-main-alt: #ff6b6b;
+  --color-accent: #4ecdc4;
+  --color-accent2: #a78bfa;
+  --color-text: #0a0a0a;
+  --color-text-muted: #444444;
+  --color-white: #ffffff;
+
+  --font-sans: "Space Grotesk", sans-serif;
+  --font-mono: "Space Mono", monospace;
+
+  --shadow-brutal: 4px 4px 0px 0px #000000;
+  --shadow-brutal-lg: 6px 6px 0px 0px #000000;
+  --shadow-brutal-sm: 2px 2px 0px 0px #000000;
+
+  --radius-base: 5px;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: #ffdd57;
+  color: #0a0a0a;
+}
+
+::-moz-selection {
+  background-color: #ffdd57;
+  color: #0a0a0a;
+}
+
+/* XTerm overrides */
+.xterm {
+  padding: 8px;
+  height: 100%;
+}
+
+.xterm-viewport {
+  border-radius: 0 !important;
+}
+
+.xterm-screen {
+  width: 100% !important;
+}

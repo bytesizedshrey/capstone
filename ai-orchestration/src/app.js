@@ -7,9 +7,13 @@ const app = express();
 app.use(morgan('dev'));
 app.use(express.json());
 
-// Routes
-app.get('/api/ai/healthz', (req, res) => {
+app.get('/api/status/healthz', (req, res) => {
     res.status(200).json({ status: 'ok' });
 });
+
+// // Routes
+// app.get('/api/ai/healthz', (req, res) => {
+//     res.status(200).json({ status: 'ok' });
+// });
 
 export default app;

@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-deployment
+  labels:
+    name: auth-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth-container
+          image: auth
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          livenessProbe:
+            httpGet:
+              path: /_status/healthz
+              port: 3000
+            initialDelaySeconds: 60
+            timeoutSeconds: 10
+            periodSeconds: 20
+          readinessProbe:
+            httpGet:
+              path: /_status/healthz
+              port: 3000
+            initialDelaySeconds: 20
+            timeoutSeconds: 10
+            periodSeconds: 10
+          ports:
+            - containerPort: 3000
+              name: auth-http
+          env:
+            - name: GOOGLE_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: google
+                  key: GOOGLE_CLIENT_ID
+            - name: GOOGLE_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: google
+                  key: GOOGLE_CLIENT_SECRET
+            - name: JWT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: jwt
+                  key: JWT_SECRET
+            - name: AUTH_MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: database
+                  key: AUTH
+            - name: GOOGLE_CALLBACK_URL
+              value: "http://localhost:5173/api/auth/google/callback"

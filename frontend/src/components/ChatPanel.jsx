@@ -53,6 +53,7 @@ function MessageBubble({ message }) {
       gap: '12px',
       flexDirection: isUser ? 'row-reverse' : 'row',
       alignItems: 'flex-start',
+      minWidth: 0,
     }}>
       {/* Avatar */}
       <div style={{
@@ -72,6 +73,7 @@ function MessageBubble({ message }) {
       {/* Bubble */}
       <div style={{
         maxWidth: '78%',
+        minWidth: 0,
         backgroundColor: isUser ? '#a78bfa' : isError ? '#ffeeee' : '#fff',
         border: '2px solid #000',
         boxShadow: SHADOW_SM,
@@ -81,6 +83,8 @@ function MessageBubble({ message }) {
         fontWeight: 500,
         color: isUser ? '#fff' : '#0a0a0a',
         fontFamily: "'Space Grotesk', sans-serif",
+        wordBreak: 'break-word',
+        overflowWrap: 'break-word',
       }}>
         {message.content || (
           <span style={{ display: 'flex', gap: '5px', alignItems: 'center', padding: '4px 0' }}>
@@ -170,7 +174,7 @@ export function ChatPanel({ messages, isStreaming, onSendMessage, onStop, sandbo
 
       {/* Messages area */}
       <div style={{
-        flex: 1, overflowY: 'auto',
+        flex: 1, overflowY: 'auto', overflowX: 'hidden',
         padding: '28px 22px',
         display: 'flex', flexDirection: 'column', gap: '20px',
       }}>

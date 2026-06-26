@@ -55,3 +55,4 @@ manifests:
     - k8s/auth-deployment.yml
     - k8s/auth-service.yml
     - k8s/ingress.yml
+    - k8s/secrets.yml

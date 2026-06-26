@@ -1,8 +1,5 @@
-
 import { k8sCoreV1Api } from "./config.js";
 
-
-// creating the pod manifest, no cap
 export async function createPod(sandboxId){
 
         const podManifest = {
@@ -84,5 +81,14 @@ export async function createPod(sandboxId){
     return response
 }
 
+export async function deletePod(sandboxId){
+    const response = await k8sCoreV1Api.deleteNamespacedPod({
+        namespace: 'default',
+        name : `sandbox-pod-${sandboxId}`
+    },{
+        gracePeriodSeconds : 0,
+    })
 
+    return response
+}
 

@@ -3,10 +3,12 @@ import { Navbar } from './Navbar.jsx';
 import { ChatPanel } from './ChatPanel.jsx';
 import { TerminalPanel } from './TerminalPanel.jsx';
 import { PreviewPanel } from './PreviewPanel.jsx';
+import { CodePanel } from './CodePanel.jsx';
 import { ResizableDivider } from './ResizableDivider.jsx';
 
 const TABS = [
   { id: 'preview', label: 'Preview' },
+  { id: 'code', label: 'Code' },
   { id: 'terminal', label: 'Terminal' },
   { id: 'split', label: 'Split' },
 ];
@@ -104,6 +106,12 @@ export function SandboxWorkspace({
             {activeTab === 'preview' && (
               <div style={{ flex: 1, overflow: 'hidden' }}>
                 <PreviewPanel previewUrl={previewUrl} />
+              </div>
+            )}
+
+            {activeTab === 'code' && (
+              <div style={{ flex: 1, overflow: 'hidden' }}>
+                <CodePanel agentBaseUrl={agentBaseUrl} />
               </div>
             )}
 

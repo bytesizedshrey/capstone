@@ -19,7 +19,7 @@ export const createService = async (sandboxId) => {
                 {
                     name : 'http',
                     port : 80,
-                    targetPort : 5174,
+                    targetPort : 5173,
                     protocol : "TCP"
                 },
                 {
@@ -43,11 +43,19 @@ export const createService = async (sandboxId) => {
 }
 
 export async function deleteService(sandboxId){
-    const response = await k8sCoreV1Api.deleteNamespacedService({
-        namespace: 'default',
-        name : `sandbox-service-${sandboxId}`
-    })
-
-    return response
+    try {
+        const response = await k8sCoreV1Api.deleteNamespacedService({
+            namespace: 'default',
+            name : `sandbox-service-${sandboxId}`
+        })
+        return response
+    } catch (error) {
+        if (error.code === 404 || error.statusCode === 404) {
+            console.log(`Service sandbox-service-${sandboxId} not found, already deleted.`);
+            return null;
+        }
+        console.error(`Error deleting service sandbox-service-${sandboxId}:`, error);
+        throw error;
+    }
 }
 

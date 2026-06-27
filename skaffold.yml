@@ -3,7 +3,8 @@ kind: Config
 
 build:
   tagPolicy:
-    sha256: {}
+    customTemplate:
+      template: "{{.IMAGE_NAME}}:latest"
   local:
     push: false
   artifacts:

@@ -36,7 +36,15 @@ export function useSandbox() {
     }
   }, []);
 
+  const resetSandbox = useCallback(() => {
+    setSandboxId(null);
+    setPreviewUrl(null);
+    setStatus('idle');
+    setError(null);
+  }, []);
+
   const agentBaseUrl = sandboxId ? `http://${sandboxId}.agent.localhost` : null;
 
-  return { sandboxId, previewUrl, agentBaseUrl, status, error, startSandbox };
+  return { sandboxId, previewUrl, agentBaseUrl, status, error, startSandbox, resetSandbox };
 }
+

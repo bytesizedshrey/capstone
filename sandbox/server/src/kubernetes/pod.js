@@ -4,7 +4,7 @@ export async function createPod(sandboxId){
 
         const podManifest = {
         metadata: {
-            name : `sandebox-pod-${sandboxId}`,
+            name : `sandbox-pod-${sandboxId}`,
             labels: {
                 app: 'sandbox',
                 sandboxId: sandboxId
@@ -22,8 +22,8 @@ export async function createPod(sandboxId){
                 {
                     name : 'init-container',
                     image : "template:latest",
-                    imagePullPolicy : "IfNotPresent",
-                    command : ['sh','-c','cp -r /workspace/. /seed/'],
+                    imagePullPolicy : "Never",
+                    command : ['sh','-c','cp -r /workspace/. /seed/ && sed -i "s/server:{/server:{host:true,allowedHosts:true,/" /seed/vite.config.js'],
                     volumeMounts:[
                         {
                             name : 'workspace-volume',
@@ -35,9 +35,9 @@ export async function createPod(sandboxId){
             containers : [
                 {
                     image : 'template:latest',
-                    imagePullPolicy: 'IfNotPresent',
+                    imagePullPolicy: 'Never',
                     name : 'sandbox-container',
-                    ports: [{containerPort : 5174, name:"http"}],
+                    ports: [{containerPort : 5173, name:"http"}],
                     resources :{
                         limits:{
                             cpu: "500m",
@@ -54,7 +54,7 @@ export async function createPod(sandboxId){
                 },
                 {
                     image : "agent:latest",
-                    imagePullPolicy : "Always",
+                    imagePullPolicy : "Never",
                     name : 'agent-container',
                     ports : [{containerPort: 3000, name : "agent"}],
                     resources:{
@@ -82,13 +82,21 @@ export async function createPod(sandboxId){
 }
 
 export async function deletePod(sandboxId){
-    const response = await k8sCoreV1Api.deleteNamespacedPod({
-        namespace: 'default',
-        name : `sandbox-pod-${sandboxId}`
-    },{
-        gracePeriodSeconds : 0,
-    })
-
-    return response
+    try {
+        const response = await k8sCoreV1Api.deleteNamespacedPod({
+            namespace: 'default',
+            name : `sandbox-pod-${sandboxId}`
+        },{
+            gracePeriodSeconds : 0,
+        })
+        return response
+    } catch (error) {
+        if (error.code === 404 || error.statusCode === 404) {
+            console.log(`Pod sandbox-pod-${sandboxId} not found, already deleted.`);
+            return null;
+        }
+        console.error(`Error deleting pod sandbox-pod-${sandboxId}:`, error);
+        throw error;
+    }
 }
 

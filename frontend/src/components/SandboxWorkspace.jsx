@@ -1,10 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Navbar } from './Navbar.jsx';
 import { ChatPanel } from './ChatPanel.jsx';
 import { TerminalPanel } from './TerminalPanel.jsx';
 import { PreviewPanel } from './PreviewPanel.jsx';
 import { CodePanel } from './CodePanel.jsx';
 import { ResizableDivider } from './ResizableDivider.jsx';
+
+import { ProjectCompletePopup } from './ProjectCompletePopup.jsx';
 
 const TABS = [
   { id: 'preview', label: 'Preview' },
@@ -15,11 +17,41 @@ const TABS = [
 
 export function SandboxWorkspace({
   sandboxId, previewUrl, agentBaseUrl,
-  messages, isStreaming, onSendMessage, onStop,
+  messages, isStreaming, onSendMessage, onStop, onReset
 }) {
   const [activeTab, setActiveTab] = useState('preview');
   const [chatWidthPx, setChatWidthPx] = useState(360);
   const [previewHeightPct, setPreviewHeightPct] = useState(60);
+
+  const [showProjectComplete, setShowProjectComplete] = useState(false);
+  const [provisioningError, setProvisioningError] = useState(false);
+  const [prevStreaming, setPrevStreaming] = useState(false);
+
+  useEffect(() => {
+    if (prevStreaming && !isStreaming && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      if (lastMessage.role === 'ai' && !lastMessage.error) {
+        // AI generation completed. Now verify provisioning.
+        const checkHealth = async () => {
+          try {
+            const [previewRes, agentRes] = await Promise.all([
+              fetch(previewUrl, { method: 'HEAD' }),
+              fetch(`${agentBaseUrl}/list-files`, { method: 'HEAD' })
+            ]);
+            if (previewRes.ok && agentRes.ok) {
+              setShowProjectComplete(true);
+            } else {
+              setProvisioningError(true);
+            }
+          } catch (e) {
+            setProvisioningError(true);
+          }
+        };
+        checkHealth();
+      }
+    }
+    setPrevStreaming(isStreaming);
+  }, [isStreaming, messages, prevStreaming, previewUrl, agentBaseUrl]);
 
   const handleHorizontalResize = useCallback((delta) => {
     setChatWidthPx(prev => Math.max(280, Math.min(620, prev + delta)));
@@ -37,6 +69,35 @@ export function SandboxWorkspace({
       height: '100vh', backgroundColor: '#f5f1eb', overflow: 'hidden',
     }}>
       <Navbar sandboxId={sandboxId} />
+
+      {showProjectComplete && (
+        <ProjectCompletePopup 
+          onClose={() => setShowProjectComplete(false)}
+          onOpenPreview={() => {
+            setActiveTab('preview');
+            setShowProjectComplete(false);
+          }}
+          onOpenCode={() => {
+            setActiveTab('code');
+            setShowProjectComplete(false);
+          }}
+          onCreateAnother={() => {
+            setShowProjectComplete(false);
+            if (onReset) onReset();
+          }}
+        />
+      )}
+
+      {provisioningError && (
+        <div style={{
+          position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999,
+          backgroundColor: '#ff6b6b', border: '2px solid #000', boxShadow: '4px 4px 0px 0px #000',
+          padding: '16px', fontFamily: "'Space Mono', monospace", fontWeight: 'bold'
+        }}>
+          ⚠️ Project generated, but sandbox provisioning failed.
+          <button onClick={() => setProvisioningError(false)} style={{ marginLeft: '12px', background: 'transparent', border: 'none', textDecoration: 'underline', cursor: 'pointer' }}>Dismiss</button>
+        </div>
+      )}
 
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
 

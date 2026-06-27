@@ -33,19 +33,27 @@ export function SandboxWorkspace({
       if (lastMessage.role === 'ai' && !lastMessage.error) {
         // AI generation completed. Now verify provisioning.
         const checkHealth = async () => {
-          try {
-            const [previewRes, agentRes] = await Promise.all([
-              fetch(previewUrl, { method: 'HEAD' }),
-              fetch(`${agentBaseUrl}/list-files`, { method: 'HEAD' })
-            ]);
-            if (previewRes.ok && agentRes.ok) {
-              setShowProjectComplete(true);
-            } else {
-              setProvisioningError(true);
+          let attempts = 0;
+          const maxAttempts = 15;
+          const retryDelayMs = 2000;
+          
+          while (attempts < maxAttempts) {
+            try {
+              const [previewRes, agentRes] = await Promise.all([
+                fetch(previewUrl, { method: 'HEAD' }),
+                fetch(`${agentBaseUrl}/list-files`, { method: 'HEAD' })
+              ]);
+              if (previewRes.ok && agentRes.ok) {
+                setShowProjectComplete(true);
+                return;
+              }
+            } catch (e) {
+              // Ignore network errors during retries
             }
-          } catch (e) {
-            setProvisioningError(true);
+            attempts++;
+            await new Promise(resolve => setTimeout(resolve, retryDelayMs));
           }
+          setProvisioningError(true);
         };
         checkHealth();
       }

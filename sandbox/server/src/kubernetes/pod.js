@@ -41,9 +41,9 @@ export async function createPod(sandboxId){
                     resources :{
                         limits:{
                             cpu: "500m",
-                            memory:"1Gi"
+                            memory:"500Mi"
                         },
-                        requests:{cpu:"250m", memory:"500Mi"}
+                        requests:{cpu:"100m", memory:"100Mi"}
                     },
                     volumeMounts: [
                         {
@@ -56,10 +56,11 @@ export async function createPod(sandboxId){
                     image : "agent:latest",
                     imagePullPolicy : "Never",
                     name : 'agent-container',
+                    command: ['sh', '-c', 'sed -i "s/filePath.replace(WORKING_DIR, \\x27\\x27)/path.relative(WORKING_DIR, filePath)/g" src/app.js && node server.js'],
                     ports : [{containerPort: 3000, name : "agent"}],
                     resources:{
-                        limits: {cpu: "500m", memory: "1Gi"},
-                        requests:{cpu:"250m", memory: "500Mi"}
+                        limits: {cpu: "500m", memory: "500Mi"},
+                        requests:{cpu:"100m", memory: "100Mi"}
                     },
                     volumeMounts: [
                         {

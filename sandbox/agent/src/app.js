@@ -146,11 +146,11 @@ app.get("/read-files", async (req, res) => {
         try {
             const content = await fs.promises.readFile(filePath, 'utf-8');
             return {
-                [ filePath.replace(WORKING_DIR, '') ]: content,
+                [ path.relative(WORKING_DIR, filePath) ]: content,
             }
         } catch (err) {
             return {
-                [ filePath.replace(WORKING_DIR, '') ]: `Error reading file: ${err.message}`,
+                [ path.relative(WORKING_DIR, filePath) ]: `Error reading file: ${err.message}`,
             }
         }
     }));

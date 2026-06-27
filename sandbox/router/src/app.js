@@ -21,6 +21,11 @@ app.get('/api/status/readyz', (req, res) => {
 const proxies = {}
 const agentProxies = {}
 
+// Forward central API requests to the correct cluster services
+app.use('/api/sandbox', createProxyMiddleware({ target: 'http://sandbox-service:80', changeOrigin: true }));
+app.use('/api/ai', createProxyMiddleware({ target: 'http://ai-service:80', changeOrigin: true }));
+app.use('/api/auth', createProxyMiddleware({ target: 'http://auth-service:80', changeOrigin: true }));
+
 function getProxy(sandboxId) {
     const target = `http://sandbox-service-${sandboxId}`;
     if (!proxies[ sandboxId ]) {

@@ -45,7 +45,7 @@ export const createService = async (sandboxId) => {
 export async function deleteService(sandboxId){
     const response = await k8sCoreV1Api.deleteNamespacedService({
         namespace: 'default',
-        name : `sandbox-pod-${sandboxId}`
+        name : `sandbox-service-${sandboxId}`
     })
 
     return response

@@ -24,7 +24,7 @@ spec:
           image: ai-orchestration
           envFrom:
             - secretRef:
-                name: ai-secrets
+                name: ai-secret
 
           resources:
             requests:

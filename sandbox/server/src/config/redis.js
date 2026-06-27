@@ -1,6 +1,6 @@
 import Redis from 'ioredis'
-import { deletePod } from '../kubernetes/pod'
-import { deleteService } from '../kubernetes/service'
+import { deletePod } from '../kubernetes/pod.js'
+import { deleteService } from '../kubernetes/service.js'
 
 const redis = new Redis(process.env.REDIS_URL)
 

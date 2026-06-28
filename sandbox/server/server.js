@@ -1,3 +1,4 @@
+import "dotenv/config"
 import app from './src/app.js'
 
 // let the api cook on port 3000

@@ -19,9 +19,7 @@ router.get('/google/callback', passport.authenticate('google', {
     try {
         const { id, displayName, emails, photos } = req.user;
         let user = await User.findOne({ googleId: id });
-
-
-
+        
         if (!user) {
             user = new User({
                 googleId: id,

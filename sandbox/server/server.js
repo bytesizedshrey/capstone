@@ -1,5 +1,8 @@
 import "dotenv/config"
 import app from './src/app.js'
+import connectDB from "./src/config/db.js"
+
+connectDB()
 
 // let the api cook on port 3000
 app.listen(3000,()=>{

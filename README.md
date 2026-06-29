@@ -1,40 +1,40 @@
-# Hateable
+# hateable
 
-![Hateable Landing Screen](screenshot.png)
+![hateable](screenshot.png)
 
-> "Darling, I’m a nightmare dressed like a daydream."
-> "Oh, it's so convenient how you compiled right when I was looking..."
+> darling, i'm a nightmare dressed like a daydream.
 
-Hateable is your favorite toxic relationship in IDE format. It's a secure, isolated sandbox playground that looks like a daydream but runs like an absolute nightmare under the hood. You look like our next mistake — write your app's name in our blank space.
+welcome to hateable. it’s giving neo-brutalism, it’s giving zero-config sandboxes, and it’s giving “when did you get hot?” 
 
-## the vibe
-We're giving you dramatic pop sarcasm and visual excess. It's loveable on a low budget, a little bit of drama, and a lot of *"please, please, please don't crash the cluster."*
+yap your dream app into existence and let the ai do the heavy lifting. we'll write the code, you just sit there, look pretty, and try not to disassociate. 
 
-## features (are you ready for the drama?)
-- **blank spaces (sandboxes):** We’ve got a long list of ex-containers, and they'll tell you we're insane. But we'll boot a fresh one for you in seconds anyway.
-- **when did you get hot? (neo-brutalist ui):** Hard borders, bold drop shadows, and sharp contrasts. We were ugly-cute before, but now? It's giving main character energy.
-- **screaming, crying, perfect code (ai gen):** A dry, emoji-free AI assistant who writes React code while writing your name on its hit list.
-- **tactile controls:** Buttons that scale and dials that click. Touch them, play with them, ruin them. We love the game.
+## the vibe ☕️
+magic, madness, heaven, sin. 
+we got a long list of ex-frameworks, they'll tell you we're insane. but we've got a blank space, baby, and we'll write your code. 
 
-## running locally (if you like the danger)
-*"It’s gonna be forever, or it’s gonna go down in flames."*
+- **zero-config sandboxes:** literally just works. boots up faster than you can say *please please please* don't crash.
+- **the aesthetic:** hard borders, sharp shadows, and loud colors. it's serving unbothered bad bitch energy.
+- **ai-powered:** an ai assistant that actually gets it. no emojis, no cringe, just straight up shipping features while silently judging your tech stack. 
 
-### 1. prerequisites
-- Docker Desktop with Kubernetes (it's possessive, it wants all your memory, don't say we didn't warn ya).
-- Skaffold (to orchestrate the microservice chaos).
+## running it (if you're brave)
+it's gonna be forever, or it's gonna go down in flames.
 
-### 2. startup
-Cross your fingers and run:
+you need docker desktop and skaffold. give it all your ram. don't be stingy.
+
 ```bash
 skaffold dev
 ```
-If it says `Insufficient memory`, just delete your other repositories, disassociate, and buy another iced coffee. 
 
-## architecture (the web we weave)
-- **router:** Proxies traffic. Cherry-picks who gets in. Usually returns 504 when it decides to go down in flames.
-- **auth:** Google OAuth. Because we love the drama of third-party tracking.
-- **sandbox-api:** Spawns pods. We can make the bad pods good for a weekend.
-- **sync-agent:** Syncs code with S3. Now pointing to `ap-south-1` because having the wrong region was *such* a bad coincidence.
+if it hits you with `insufficient memory`, that sounds like a you problem. close your 400 chrome tabs and try again. 
+
+once it's up, head to localhost. that's that me espresso.
+
+## architecture
+it's a microservices stack because keeping it simple is boring.
+- **router:** cherry-picks who gets in. 
+- **auth:** google oauth so they can track your every move. love that for us.
+- **sandbox-api:** spins up custom pods for your preview and terminal. we can make the bad pods good for a weekend.
+- **sync-agent:** syncs your code with s3. currently pointing to ap-south-1 because having the wrong region was *such* a bad coincidence.
 
 ## license
-MIT. Or whatever. Do what you want. We'll write your name in our git log.
+MIT. steal it, copy it, whatever. i promise i won't hold a grudge (i will).

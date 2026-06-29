@@ -4,7 +4,7 @@ import { LandingScreen } from './components/LandingScreen.jsx';
 import { SandboxWorkspace } from './components/SandboxWorkspace.jsx';
 
 function App() {
-  const { sandboxId, previewUrl, agentBaseUrl, status, error, startSandbox, resetSandbox } = useSandbox();
+  const { sandboxId, previewUrl, agentBaseUrl, status, error, startSandbox, resetSandbox, projects } = useSandbox();
   const { messages, isStreaming, sendMessage, stopStreaming, clearMessages } = useAIChat(sandboxId);
 
   // Show workspace once sandbox is running
@@ -32,6 +32,7 @@ function App() {
       onStart={startSandbox}
       status={status}
       error={error}
+      projects={projects}
     />
   );
 }

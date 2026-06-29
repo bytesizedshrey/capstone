@@ -18,13 +18,6 @@ spec:
         - image: notification:latest
           imagePullPolicy: IfNotPresent
           name: notification-server
-          resources:
-            requests:
-              cpu: "150m"
-              memory: "100M"
-            limits:
-              cpu: "300m"
-              memory: "200M"
 
           livenessProbe:
             httpGet:

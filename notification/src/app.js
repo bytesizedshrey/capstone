@@ -31,9 +31,10 @@ channel.consume('auth_notification_queue', async (msg) => {
             let html = `<p>A new login was detected for your account at <strong>${timestamp}</strong>. If this was not you, please secure your account immediately.</p>`;
 
             if (action === 'google_login') {
-                subject = 'New Login Alert';
-                text = 'We detected a new login to your CryBoy account via Google.';
-                html = '<p>We detected a new login to your <b>CryBoy</b> account via Google.</p>';
+                const APP_NAME = process.env.APP_NAME || 'Application';
+                subject = `New Login to your ${APP_NAME} account`;
+                text = `We detected a new login to your ${APP_NAME} account via Google.`;
+                html = `<p>We detected a new login to your <b>${APP_NAME}</b> account via Google.</p>`;
             }
 
             await sendEmail(email, subject, text, html);

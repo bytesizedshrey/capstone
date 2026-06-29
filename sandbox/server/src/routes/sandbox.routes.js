@@ -24,8 +24,9 @@ router.post('/project',authMiddleware,async(req,res) => {
 })
 
 // main entry point for spinning up pods, fr fr
-router.post("/api/sandbox/start",authMiddleware,async(req,res)=>{
+router.post("/start",authMiddleware,async(req,res)=>{
     const projectId = req.body.projectId
+    const project = await Project.findOne({ _id: projectId, user: req.user.id })
 
     if(!project){
         return res.status(404).json({message : 'Project not found or access denied'})
@@ -36,7 +37,7 @@ router.post("/api/sandbox/start",authMiddleware,async(req,res)=>{
 
     try {
         await Promise.all([
-            createPod(sandboxId),
+            createPod(sandboxId,projectId),
             createService(sandboxId),
             createSandboxKey(sandboxId)
         ]);
@@ -60,7 +61,7 @@ router.post("/api/sandbox/start",authMiddleware,async(req,res)=>{
 })
 
 router.get("/projects",authMiddleware,async(req,res)=>{
-    const project = await Project.find({user : req.user.id})
+    const projects = await Project.find({user : req.user.id})
 
     return res.status(200).json({
         message : 'Project retrieved sucessfully',

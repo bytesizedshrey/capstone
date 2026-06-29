@@ -55,7 +55,7 @@ export function PreviewPanel({ previewUrl }) {
 
       {/* Header */}
       <div style={{
-        backgroundColor: '#a78bfa',
+        backgroundColor: '#ffdd57',
         borderBottom: '4px solid #000',
         padding: '14px 24px',
         display: 'flex', alignItems: 'center', gap: '16px',
@@ -64,7 +64,7 @@ export function PreviewPanel({ previewUrl }) {
         <span style={{
           fontFamily: "'Space Mono', monospace",
           fontWeight: 700, fontSize: '13px',
-          color: '#fff', textTransform: 'uppercase', letterSpacing: '0.1em',
+          color: '#000', textTransform: 'uppercase', letterSpacing: '0.1em',
           flexShrink: 0,
         }}>
           Preview

@@ -57,8 +57,61 @@ function BrutalBtn({ onClick, disabled, loading, children, id, color = '#ffdd57'
   );
 }
 
-export function LandingScreen({ onStart, status, error }) {
+import { useState, useEffect } from 'react';
+import { OnboardingModal } from './OnboardingModal.jsx';
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
+
+export function LandingScreen({ onStart, status, error, projects }) {
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
   const isStarting = status === 'starting';
+
+  // Handle Toast notifications from auth redirects
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('login') === 'success') {
+      setToastMessage('Happy Building! 🎉');
+      // Clean up the URL
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } else if (params.get('logout') === 'success') {
+      setToastMessage('Signed out successfully 👋');
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+
+    if (toastMessage) {
+      const timer = setTimeout(() => setToastMessage(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [toastMessage]);
+
+  const dismissOnboarding = () => {
+    localStorage.setItem('hateable_onboarding_dismissed', 'true');
+    setShowOnboarding(false);
+  };
+
+  const handleStartOnboarding = (projectTitle) => {
+    localStorage.setItem('hateable_onboarding_dismissed', 'true');
+    // We don't close the modal yet because it will show the loading spinner inside the modal
+    onStart(projectTitle);
+  };
+  useEffect(() => {
+    if (projects && projects.length === 0) {
+      // User is authenticated but has no projects
+      const hasDismissed = localStorage.getItem('hateable_onboarding_dismissed');
+      if (!hasDismissed) {
+        setShowOnboarding(true);
+      }
+    }
+  }, [projects]);
+
+
 
   return (
     <div style={{
@@ -73,6 +126,77 @@ export function LandingScreen({ onStart, status, error }) {
       position: 'relative',
       overflow: 'hidden',
     }}>
+
+      {/* AlertDialog Popup */}
+      <AlertDialog open={!!toastMessage} onOpenChange={(open) => !open && setToastMessage(null)}>
+        <AlertDialogContent style={{
+          backgroundColor: '#ffdd57',
+          border: '3px solid #000',
+          boxShadow: '10px 10px 0px #000',
+          padding: '40px 48px',
+          borderRadius: '0',
+          gap: '16px'
+        }}>
+          <AlertDialogHeader>
+            <AlertDialogTitle style={{ 
+              fontFamily: "'Space Grotesk', sans-serif", 
+              fontSize: '28px', 
+              fontWeight: 800, 
+              color: '#000', 
+              textTransform: 'uppercase', 
+              letterSpacing: '-0.02em',
+              marginBottom: '12px'
+            }}>
+              Update Status
+            </AlertDialogTitle>
+            <AlertDialogDescription style={{ 
+              fontFamily: "'Space Mono', monospace", 
+              fontSize: '16px', 
+              color: '#000', 
+              fontWeight: 600,
+              lineHeight: 1.6
+            }}>
+              {toastMessage}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '32px' }}>
+            <AlertDialogAction 
+              onClick={() => setToastMessage(null)}
+              style={{
+                backgroundColor: '#fff',
+                border: '2px solid #000',
+                boxShadow: '4px 4px 0px #000',
+                color: '#000',
+                fontFamily: "'Space Mono', monospace",
+                fontWeight: 700,
+                fontSize: '14px',
+                padding: '12px 28px',
+                textTransform: 'uppercase',
+                borderRadius: '0',
+                cursor: 'pointer',
+                transition: 'transform 80ms, box-shadow 80ms'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.transform = 'translate(4px, 4px)';
+                e.currentTarget.style.boxShadow = 'none';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.transform = 'translate(0, 0)';
+                e.currentTarget.style.boxShadow = '4px 4px 0px #000';
+              }}
+            >
+              GOT IT
+            </AlertDialogAction>
+          </div>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <OnboardingModal 
+        isOpen={showOnboarding}
+        onClose={dismissOnboarding}
+        onStart={handleStartOnboarding}
+        isStarting={isStarting}
+      />
 
       {/* Dot grid bg */}
       <div style={{
@@ -102,7 +226,7 @@ export function LandingScreen({ onStart, status, error }) {
             textTransform: 'uppercase',
             color: '#000',
           }}>
-            Now in Beta
+            loveable on a low budget
           </span>
         </div>
 
@@ -154,21 +278,80 @@ export function LandingScreen({ onStart, status, error }) {
             fontWeight: 500,
             maxWidth: '360px',
           }}>
-            Tell us what you want to build.<br />
-            We handle all the hard parts for you.
+            spill the tea on what you wanna build.<br />
+            we'll handle the coding, you handle the existential dread.
           </p>
 
           {/* CTA */}
           <div style={{ width: '100%' }}>
-            <BrutalBtn
-              id="start-sandbox-btn"
-              onClick={onStart}
-              loading={isStarting}
-              disabled={isStarting}
-            >
-              {isStarting ? 'Setting up your workspace...' : 'Start Building'}
-            </BrutalBtn>
+            {projects === null ? (
+              // Unauthenticated state - redirect to login
+              <BrutalBtn
+                id="start-sandbox-btn"
+                onClick={() => window.location.href = '/api/auth/google'}
+                disabled={false}
+              >
+                Sign in to Start Building
+              </BrutalBtn>
+            ) : (
+              <BrutalBtn
+                id="start-sandbox-btn"
+                onClick={() => onStart('New Project')}
+                loading={isStarting}
+                disabled={isStarting}
+              >
+                {isStarting ? 'Setting up your workspace...' : 'Start Building'}
+              </BrutalBtn>
+            )}
           </div>
+
+          {/* Existing Projects */}
+          {projects && projects.length > 0 && (
+            <div style={{ width: '100%', marginTop: '32px' }}>
+              <h3 style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: '14px',
+                textTransform: 'uppercase',
+                marginBottom: '12px'
+              }}>
+                Your Projects
+              </h3>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                {projects.map((p) => (
+                  <li key={p._id} style={{
+                    padding: '12px',
+                    border: '2px solid #000',
+                    backgroundColor: '#fff',
+                    fontFamily: "'Space Mono', monospace",
+                    fontSize: '13px'
+                  }}>
+                    {p.title}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Logout Button */}
+          {projects !== null && (
+            <div style={{ width: '100%', marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
+              <button
+                onClick={() => window.location.href = '/api/auth/logout'}
+                style={{
+                  backgroundColor: 'transparent',
+                  border: 'none',
+                  color: '#666',
+                  fontFamily: "'Space Mono', monospace",
+                  fontSize: '13px',
+                  textDecoration: 'underline',
+                  cursor: 'pointer',
+                  padding: '12px'
+                }}
+              >
+                Sign out
+              </button>
+            </div>
+          )}
 
           {/* Error */}
           {error && (
@@ -197,7 +380,7 @@ export function LandingScreen({ onStart, status, error }) {
           color: '#999',
           letterSpacing: '0.04em',
         }}>
-          Free to try &nbsp;&middot;&nbsp; No account needed
+          Free to try
         </p>
 
       </div>

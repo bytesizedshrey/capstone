@@ -43,6 +43,126 @@ function BrutalButtonSmall({ onClick, disabled, id, color = '#ffdd57', textColor
   );
 }
 
+function formatMarkdown(text) {
+  if (!text) return '';
+  
+  const lines = text.split('\n');
+  return lines.map((line, idx) => {
+    let cleanLine = line;
+    
+    // Check if it's a list item
+    const isBullet = cleanLine.trim().startsWith('- ') || cleanLine.trim().startsWith('* ');
+    const isHeading = cleanLine.trim().startsWith('#');
+    
+    if (isBullet) {
+      const bulletMatch = cleanLine.match(/^\s*[-*]\s+(.*)$/);
+      if (bulletMatch) cleanLine = bulletMatch[1];
+    }
+    
+    let headingLevel = 0;
+    if (isHeading) {
+      const match = cleanLine.trim().match(/^(#{1,6})\s+(.*)$/);
+      if (match) {
+        headingLevel = match[1].length;
+        cleanLine = match[2];
+      }
+    }
+    
+    // Replace inline code blocks `code`
+    let parts = [cleanLine];
+    if (cleanLine.includes('`')) {
+      const splitBackticks = cleanLine.split('`');
+      parts = splitBackticks.map((part, i) => {
+        if (i % 2 === 1) {
+          return (
+            <code key={i} style={{ 
+              fontFamily: "'Space Mono', monospace", 
+              backgroundColor: '#e5e7eb', 
+              padding: '2px 6px', 
+              border: '1.5px solid #000',
+              fontSize: '11px',
+              color: '#000',
+              fontWeight: 700,
+              display: 'inline-block',
+              margin: '0 2px'
+            }}>{part}</code>
+          );
+        }
+        return part;
+      });
+    }
+
+    // Replace bold formatting **text**
+    const parseBold = (nodeList) => {
+      return nodeList.flatMap((node, idx2) => {
+        if (typeof node !== 'string') return node;
+        if (!node.includes('**')) return node;
+        
+        const boldSplit = node.split('**');
+        return boldSplit.map((subpart, j) => {
+          if (j % 2 === 1) {
+            return <strong key={`${idx2}-${j}`} style={{ fontWeight: 800 }}>{subpart}</strong>;
+          }
+          return subpart;
+        });
+      });
+    };
+
+    let content = parseBold(parts);
+
+    if (isBullet) {
+      return (
+        <div key={idx} style={{ 
+          display: 'flex', 
+          alignItems: 'flex-start',
+          gap: '8px',
+          marginBottom: '6px',
+          fontFamily: "'Space Grotesk', sans-serif",
+          paddingLeft: '12px'
+        }}>
+          <span style={{ 
+            width: '6px', height: '6px', 
+            backgroundColor: '#000', 
+            border: '1.5px solid #000',
+            flexShrink: 0,
+            marginTop: '8px'
+          }} />
+          <div style={{ flex: 1, fontSize: '13px', color: '#000' }}>{content}</div>
+        </div>
+      );
+    }
+
+    if (headingLevel > 0) {
+      const sizeMap = { 1: '16px', 2: '14px', 3: '13px' };
+      const fontSize = sizeMap[headingLevel] || '13px';
+      return (
+        <h4 key={idx} style={{ 
+          fontFamily: "'Space Grotesk', sans-serif", 
+          fontWeight: 800, 
+          marginTop: '14px', 
+          marginBottom: '6px',
+          textTransform: 'uppercase',
+          fontSize: fontSize,
+          color: '#000',
+          lineHeight: 1.2
+        }}>
+          {content}
+        </h4>
+      );
+    }
+
+    if (line.trim() === '') {
+      return <div key={idx} style={{ height: '8px' }} />;
+    }
+
+    return (
+      <div key={idx} style={{ marginBottom: '6px', lineHeight: 1.6, fontFamily: "'Space Grotesk', sans-serif", fontSize: '13px', color: '#000' }}>
+        {content}
+      </div>
+    );
+  });
+}
+
 function MessageBubble({ message }) {
   const isUser = message.role === 'user';
   const isError = message.error;
@@ -78,7 +198,7 @@ function MessageBubble({ message }) {
         border: '2px solid #000',
         boxShadow: SHADOW_SM,
         padding: '14px 18px',
-        fontSize: '14px',
+        fontSize: '13px',
         lineHeight: 1.65,
         fontWeight: 500,
         color: isUser ? '#fff' : '#0a0a0a',
@@ -86,7 +206,13 @@ function MessageBubble({ message }) {
         wordBreak: 'break-word',
         overflowWrap: 'break-word',
       }}>
-        {message.content || (
+        {isUser ? (
+          message.content
+        ) : message.content ? (
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            {formatMarkdown(message.content)}
+          </div>
+        ) : (
           <span style={{ display: 'flex', gap: '5px', alignItems: 'center', padding: '4px 0' }}>
             {[0, 150, 300].map(d => (
               <span key={d} style={{

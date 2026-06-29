@@ -16,8 +16,7 @@ app.use(cookies());
 app.use(passport.initialize());
 app.use(cors({
     origin: [
-        'https://www.cryboy.in',
-        /\.cryboy\.in$/,
+        process.env.FRONTEND_URL || 'http://localhost:5173',
         /^https?:\/\/(?:.+\.)?localhost(?::\d+)?$/,  // allow all localhost origins
     ],
     credentials: true,

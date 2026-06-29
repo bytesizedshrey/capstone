@@ -1,43 +1,85 @@
 // Hook to manage the sandbox lifecycle
-import { useState, useCallback } from 'react';
-
-const SANDBOX_API = '/api/sandbox/start';
+import { useState, useCallback, useEffect } from 'react';
 
 export function useSandbox() {
   const [sandboxId, setSandboxId] = useState(null);
+  const [projectId, setProjectId] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [status, setStatus] = useState('idle'); // idle | starting | running | error
   const [error, setError] = useState(null);
+  const [projects, setProjects] = useState(null);
 
-  const startSandbox = useCallback(async () => {
+  // Load existing projects using GET /api/sandbox/projects
+  const loadProjects = useCallback(async () => {
+    try {
+      const res = await fetch('/api/sandbox/projects', {
+        method: 'GET',
+        credentials: 'include'
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProjects(data.projects || []);
+      }
+    } catch (err) {
+      console.error('Failed to load projects:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadProjects();
+  }, [loadProjects]);
+
+  const startSandbox = useCallback(async (title = 'New Project') => {
     setStatus('starting');
     setError(null);
     try {
-      const res = await fetch(SANDBOX_API, {
+      // 1. Create the project via POST /api/sandbox/project
+      const projectRes = await fetch('/api/sandbox/project', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ title }),
       });
 
-      // Guard against HTML error pages (proxy unreachable, 502, etc.)
-      const contentType = res.headers.get('content-type') || '';
-      if (!contentType.includes('application/json')) {
-        throw new Error(`Server returned an unexpected response (${res.status}). Is the backend running?`);
+      const projectContentType = projectRes.headers.get('content-type') || '';
+      if (!projectContentType.includes('application/json')) {
+        throw new Error(`Server returned an unexpected response (${projectRes.status}). Is the backend running?`);
       }
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to start sandbox');
+      const projectData = await projectRes.json();
+      if (!projectRes.ok) throw new Error(projectData.error || 'Failed to create project');
+      
+      // Extract projectId exactly as returned by the backend
+      const newProjectId = projectData.project?._id;
+      if (!newProjectId) throw new Error('Backend did not return a valid project ID');
+      setProjectId(newProjectId);
 
-      setSandboxId(data.sandboxId);
-      setPreviewUrl(data.previewUrl);
+      // 2. Start the Sandbox via POST /api/sandbox/start
+      const sandboxRes = await fetch('/api/sandbox/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ projectId: newProjectId }),
+      });
+
+      const sandboxData = await sandboxRes.json();
+      if (!sandboxRes.ok) throw new Error(sandboxData.error || 'Failed to start sandbox');
+
+      setSandboxId(sandboxData.sandboxId);
+      setPreviewUrl(sandboxData.previewUrl);
       setStatus('running');
+      
+      // Reload projects list after creating a new one
+      loadProjects();
     } catch (err) {
       setError(err.message);
       setStatus('error');
     }
-  }, []);
+  }, [loadProjects]);
 
   const resetSandbox = useCallback(() => {
     setSandboxId(null);
+    setProjectId(null);
     setPreviewUrl(null);
     setStatus('idle');
     setError(null);
@@ -45,6 +87,16 @@ export function useSandbox() {
 
   const agentBaseUrl = sandboxId ? `http://${sandboxId}.agent.localhost` : null;
 
-  return { sandboxId, previewUrl, agentBaseUrl, status, error, startSandbox, resetSandbox };
+  return { 
+    sandboxId, 
+    projectId, 
+    previewUrl, 
+    agentBaseUrl, 
+    status, 
+    error, 
+    projects,
+    startSandbox, 
+    resetSandbox,
+    loadProjects
+  };
 }
-

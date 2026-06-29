@@ -7,8 +7,7 @@ services:
     startCommand: npm start
     healthCheckPath: /api/status/healthz
     envVars:
-      - key: REDIS_URL
-        sync: true
+      - fromGroup: capstone-secrets
       - key: AUTH_SERVICE_URL
         value: https://capstone-auth.onrender.com
       - key: SANDBOX_SERVICE_URL
@@ -24,22 +23,7 @@ services:
     startCommand: npm start
     healthCheckPath: /_status/healthz
     envVars:
-      - key: AUTH_MONGO_URI
-        sync: true
-      - key: RABBITMQ_URL
-        sync: true
-      - key: JWT_SECRET
-        sync: true
-      - key: GOOGLE_CLIENT_ID
-        sync: true
-      - key: GOOGLE_CLIENT_SECRET
-        sync: true
-      - key: GOOGLE_CALLBACK_URL
-        sync: true
-      - key: FRONTEND_URL
-        sync: true
-      - key: COOKIE_DOMAIN
-        sync: true
+      - fromGroup: capstone-secrets
 
   - type: web
     name: capstone-sandbox-api
@@ -49,22 +33,7 @@ services:
     startCommand: npm start
     healthCheckPath: /api/sandbox/health
     envVars:
-      - key: AUTH_MONGO_URI
-        sync: true
-      - key: REDIS_URL
-        sync: true
-      - key: JWT_SECRET
-        sync: true
-      - key: KUBECONFIG_BASE64
-        sync: true
-      - key: SANDBOX_DOMAIN
-        sync: true
-      - key: TEMPLATE_IMAGE
-        sync: true
-      - key: AGENT_IMAGE
-        sync: true
-      - key: SYNC_AGENT_IMAGE
-        sync: true
+      - fromGroup: capstone-secrets
       - key: TEMPLATE_IMAGE_PULL_POLICY
         value: IfNotPresent
       - key: AGENT_IMAGE_PULL_POLICY
@@ -80,8 +49,7 @@ services:
     startCommand: npm start
     healthCheckPath: /api/status/healthz
     envVars:
-      - key: MISTRAL_API_KEY
-        sync: true
+      - fromGroup: capstone-secrets
 
   - type: web
     name: capstone-notification
@@ -91,13 +59,25 @@ services:
     startCommand: npm start
     healthCheckPath: /_status/healthz
     envVars:
+      - fromGroup: capstone-secrets
+
+envVarGroups:
+  - name: capstone-secrets
+    envVars:
+      - key: REDIS_URL
+      - key: AUTH_MONGO_URI
       - key: RABBITMQ_URL
-        sync: true
-      - key: EMAIL_USER
-        sync: true
+      - key: JWT_SECRET
       - key: GOOGLE_CLIENT_ID
-        sync: true
       - key: GOOGLE_CLIENT_SECRET
-        sync: true
+      - key: GOOGLE_CALLBACK_URL
+      - key: FRONTEND_URL
+      - key: COOKIE_DOMAIN
+      - key: KUBECONFIG_BASE64
+      - key: SANDBOX_DOMAIN
+      - key: TEMPLATE_IMAGE
+      - key: AGENT_IMAGE
+      - key: SYNC_AGENT_IMAGE
+      - key: MISTRAL_API_KEY
+      - key: EMAIL_USER
       - key: GOOGLE_REFRESH_TOKEN
-        sync: true

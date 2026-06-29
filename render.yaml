@@ -5,6 +5,7 @@ services:
     rootDir: sandbox/router
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /api/status/healthz
     envVars:
       - key: REDIS_URL
         sync: true
@@ -21,6 +22,7 @@ services:
     rootDir: auth
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /_status/healthz
     envVars:
       - key: AUTH_MONGO_URI
         sync: true
@@ -45,6 +47,7 @@ services:
     rootDir: sandbox/server
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /api/sandbox/health
     envVars:
       - key: AUTH_MONGO_URI
         sync: true
@@ -75,6 +78,7 @@ services:
     rootDir: ai-orchestration
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /api/status/healthz
     envVars:
       - key: MISTRAL_API_KEY
         sync: true
@@ -85,6 +89,7 @@ services:
     rootDir: notification
     buildCommand: npm install
     startCommand: npm start
+    healthCheckPath: /_status/healthz
     envVars:
       - key: RABBITMQ_URL
         sync: true

@@ -1,0 +1,98 @@
+services:
+  - type: web
+    name: capstone-router
+    env: node
+    rootDir: sandbox/router
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: REDIS_URL
+        sync: true
+      - key: AUTH_SERVICE_URL
+        value: https://capstone-auth.onrender.com
+      - key: SANDBOX_SERVICE_URL
+        value: https://capstone-sandbox-api.onrender.com
+      - key: AI_SERVICE_URL
+        value: https://capstone-ai.onrender.com
+
+  - type: web
+    name: capstone-auth
+    env: node
+    rootDir: auth
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: AUTH_MONGO_URI
+        sync: true
+      - key: RABBITMQ_URL
+        sync: true
+      - key: JWT_SECRET
+        sync: true
+      - key: GOOGLE_CLIENT_ID
+        sync: true
+      - key: GOOGLE_CLIENT_SECRET
+        sync: true
+      - key: GOOGLE_CALLBACK_URL
+        sync: true
+      - key: FRONTEND_URL
+        sync: true
+      - key: COOKIE_DOMAIN
+        sync: true
+
+  - type: web
+    name: capstone-sandbox-api
+    env: node
+    rootDir: sandbox/server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: AUTH_MONGO_URI
+        sync: true
+      - key: REDIS_URL
+        sync: true
+      - key: JWT_SECRET
+        sync: true
+      - key: KUBECONFIG_BASE64
+        sync: true
+      - key: SANDBOX_DOMAIN
+        sync: true
+      - key: TEMPLATE_IMAGE
+        sync: true
+      - key: AGENT_IMAGE
+        sync: true
+      - key: SYNC_AGENT_IMAGE
+        sync: true
+      - key: TEMPLATE_IMAGE_PULL_POLICY
+        value: IfNotPresent
+      - key: AGENT_IMAGE_PULL_POLICY
+        value: IfNotPresent
+      - key: SYNC_AGENT_IMAGE_PULL_POLICY
+        value: IfNotPresent
+
+  - type: web
+    name: capstone-ai
+    env: node
+    rootDir: ai-orchestration
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MISTRAL_API_KEY
+        sync: true
+
+  - type: web
+    name: capstone-notification
+    env: node
+    rootDir: notification
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: RABBITMQ_URL
+        sync: true
+      - key: EMAIL_USER
+        sync: true
+      - key: GOOGLE_CLIENT_ID
+        sync: true
+      - key: GOOGLE_CLIENT_SECRET
+        sync: true
+      - key: GOOGLE_REFRESH_TOKEN
+        sync: true

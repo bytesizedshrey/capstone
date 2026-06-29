@@ -85,7 +85,8 @@ export function useSandbox() {
     setError(null);
   }, []);
 
-  const agentBaseUrl = sandboxId ? `http://${sandboxId}.agent.localhost` : null;
+  const sandboxDomain = import.meta.env.VITE_SANDBOX_DOMAIN || 'localhost';
+  const agentBaseUrl = sandboxId ? `http://${sandboxId}.agent.${sandboxDomain}` : null;
 
   return { 
     sandboxId, 

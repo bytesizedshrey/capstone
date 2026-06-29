@@ -22,9 +22,9 @@ const proxies = {}
 const agentProxies = {}
 
 // Forward central API requests to the correct cluster services
-app.use('/api/sandbox', createProxyMiddleware({ target: 'http://sandbox-service:80', changeOrigin: true }));
-app.use('/api/ai', createProxyMiddleware({ target: 'http://ai-service:80', changeOrigin: true }));
-app.use('/api/auth', createProxyMiddleware({ target: 'http://auth-service:80', changeOrigin: true }));
+app.use('/api/sandbox', createProxyMiddleware({ target: process.env.SANDBOX_SERVICE_URL || 'http://sandbox-service:80', changeOrigin: true }));
+app.use('/api/ai', createProxyMiddleware({ target: process.env.AI_SERVICE_URL || 'http://ai-service:80', changeOrigin: true }));
+app.use('/api/auth', createProxyMiddleware({ target: process.env.AUTH_SERVICE_URL || 'http://auth-service:80', changeOrigin: true }));
 
 function getProxy(sandboxId) {
     const target = `http://sandbox-service-${sandboxId}`;

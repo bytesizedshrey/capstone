@@ -1,5 +1,14 @@
 import { k8sCoreV1Api } from "./config.js";
 
+const templateImage = process.env.TEMPLATE_IMAGE || 'template:latest';
+const templateImagePullPolicy = process.env.TEMPLATE_IMAGE_PULL_POLICY || 'Never';
+
+const agentImage = process.env.AGENT_IMAGE || 'agent:latest';
+const agentImagePullPolicy = process.env.AGENT_IMAGE_PULL_POLICY || 'Never';
+
+const syncAgentImage = process.env.SYNC_AGENT_IMAGE || 'sync-agent';
+const syncAgentImagePullPolicy = process.env.SYNC_AGENT_IMAGE_PULL_POLICY || 'IfNotPresent';
+
 export async function createPod(sandboxId, projectId){
 
         const podManifest = {
@@ -21,8 +30,8 @@ export async function createPod(sandboxId, projectId){
             initContainers:[
                 {
                     name : 'init-container',
-                    image : "template:latest",
-                    imagePullPolicy : "Never",
+                    image : templateImage,
+                    imagePullPolicy : templateImagePullPolicy,
                     command : ['sh','-c','cp -r /workspace/. /seed/ && sed -i "s/server:{/server:{host:true,allowedHosts:true,/" /seed/vite.config.js'],
                     volumeMounts:[
                         {
@@ -34,8 +43,8 @@ export async function createPod(sandboxId, projectId){
             ],
             containers : [
                 {
-                    image : 'template:latest',
-                    imagePullPolicy: 'Never',
+                    image : templateImage,
+                    imagePullPolicy: templateImagePullPolicy,
                     name : 'sandbox-container',
                     ports: [{containerPort : 5173, name:"http"}],
                     resources :{
@@ -53,8 +62,8 @@ export async function createPod(sandboxId, projectId){
                     ]
                 },
                 {
-                    image : "agent:latest",
-                    imagePullPolicy : "Never",
+                    image : agentImage,
+                    imagePullPolicy : agentImagePullPolicy,
                     name : 'agent-container',
                     command: ['sh', '-c', 'sed -i "s/filePath.replace(WORKING_DIR, \\x27\\x27)/path.relative(WORKING_DIR, filePath)/g" src/app.js && node server.js'],
                     ports : [{containerPort: 3000, name : "agent"}],
@@ -69,8 +78,8 @@ export async function createPod(sandboxId, projectId){
                         }
                     ]
                 },{
-                    image : "sync-agent",
-                    imagePullPolicy : "IfNotPresent",
+                    image : syncAgentImage,
+                    imagePullPolicy : syncAgentImagePullPolicy,
                     name : 'sync-agent-container',
                     ports : [{containerPort : 4000, name : "http"}],
                     resources : {

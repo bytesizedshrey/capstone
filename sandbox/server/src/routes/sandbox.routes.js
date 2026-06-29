@@ -41,18 +41,20 @@ router.post("/start",authMiddleware,async(req,res)=>{
             createService(sandboxId),
             createSandboxKey(sandboxId)
         ]);
+        const sandboxDomain = process.env.SANDBOX_DOMAIN || 'localhost';
         return res.status(201).json({
             message : 'Sandbox env created sucessfully',
             sandboxId,
-            previewUrl : `http://${sandboxId}.preview.localhost`
+            previewUrl : `http://${sandboxId}.preview.${sandboxDomain}`
         });
     } catch (error) {
         if (error.code === 409 || (error.body && error.body.includes('"code":409'))) {
+            const sandboxDomain = process.env.SANDBOX_DOMAIN || 'localhost';
             // Already exists, just return success
             return res.status(200).json({
                 message : 'Sandbox env already exists',
                 sandboxId,
-                previewUrl : `http://${sandboxId}.preview.localhost`
+                previewUrl : `http://${sandboxId}.preview.${sandboxDomain}`
             });
         }
         console.error(error);

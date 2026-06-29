@@ -76,7 +76,7 @@ export function Navbar({ sandboxId }) {
 
         {/* Status */}
         <div style={{
-          backgroundColor: '#4ecdc4',
+          backgroundColor: '#a78bfa',
           border: '2px solid #000',
           boxShadow: SHADOW_SM,
           padding: '5px 16px',

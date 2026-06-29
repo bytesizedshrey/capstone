@@ -138,7 +138,7 @@ export function TerminalPanel({ agentBaseUrl, sandboxId }) {
 
       {/* Header */}
       <div style={{
-        backgroundColor: '#4ecdc4',
+        backgroundColor: '#a78bfa',
         borderBottom: '4px solid #000',
         padding: '14px 24px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',

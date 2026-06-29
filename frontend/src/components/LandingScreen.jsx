@@ -305,32 +305,7 @@ export function LandingScreen({ onStart, status, error, projects }) {
             )}
           </div>
 
-          {/* Existing Projects */}
-          {projects && projects.length > 0 && (
-            <div style={{ width: '100%', marginTop: '32px' }}>
-              <h3 style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: '14px',
-                textTransform: 'uppercase',
-                marginBottom: '12px'
-              }}>
-                Your Projects
-              </h3>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {projects.map((p) => (
-                  <li key={p._id} style={{
-                    padding: '12px',
-                    border: '2px solid #000',
-                    backgroundColor: '#fff',
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: '13px'
-                  }}>
-                    {p.title}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+
 
           {/* Logout Button */}
           {projects !== null && (
